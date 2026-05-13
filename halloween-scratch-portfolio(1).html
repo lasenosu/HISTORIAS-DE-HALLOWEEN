@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historias de Halloween en Scratch · 2.º ESO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Eater&family=Cinzel+Decorative:wght@400;700&family=IM+Fell+English:ital@0;1&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --negro:        #080510;
+      --morado-noche: #160a2a;
+      --morado-card:  #1e1035;
+      --calabaza:     #e8650a;
+      --calabaza-luz: #ff9a1f;
+      --hueso:        #f0e6c8;
+      --verde:        #1db954;
+      --cian:         #00c8c8;
+      --amarillo:     #f5c518;
+      --lila:         #a855f7;
+      --plata:        #c8c0b0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--negro);
+      background-image:
+        radial-gradient(ellipse 90% 55% at 50% 0%, #2a0845 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 80%, #1a0520 0%, transparent 60%);
+      color: var(--hueso);
+      font-family: 'IM Fell English', Georgia, serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* LLUVIA */
+    #lluvia {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .icono-lluvia {
+      position: absolute;
+      top: -80px;
+      opacity: 0;
+      animation: caer var(--dur) var(--delay) linear infinite;
+      filter: grayscale(20%) brightness(0.75);
+    }
+    @keyframes caer {
+      0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+      5%   { opacity: 0.5; }
+      90%  { opacity: 0.35; }
+      100% { transform: translateY(110vh) rotate(var(--rot)); opacity: 0; }
+    }
+
+    /* ESTRELLAS */
+    #stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    #stars span {
+      position: absolute;
+      width: 1.5px; height: 1.5px;
+      background: #fff;
+      border-radius: 50%;
+      animation: twinkle var(--d) var(--dl) ease-in-out infinite alternate;
+    }
+    @keyframes twinkle {
+      from { opacity: 0.06; }
+      to   { opacity: 0.88; }
+    }
+
+    /* CABECERA */
+    header {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 3.5rem 1rem 2rem;
+      animation: fadeUp 0.9s ease both;
+    }
+    .badge {
+      display: inline-block;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--calabaza);
+      border: 1px solid #e8650a55;
+      padding: 0.3rem 1.2rem;
+      border-radius: 2px;
+      margin-bottom: 1.6rem;
+    }
+    .luna {
+      display: block;
+      font-size: 4rem;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      filter: drop-shadow(0 0 20px #ffe47a99);
+      animation: lunaPulse 4s ease-in-out infinite;
+    }
+    @keyframes lunaPulse {
+      0%,100% { filter: drop-shadow(0 0 14px #ffe47a66); }
+      50%      { filter: drop-shadow(0 0 36px #ffe47acc); }
+    }
+    h1 {
+      font-family: 'Eater', cursive;
+      font-size: clamp(2rem, 6vw, 3.8rem);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--calabaza-luz);
+      text-shadow: 0 0 22px #ff6a0077, 0 3px 0 #3a1200, 2px 2px 0 #1a0800;
+      margin-bottom: 0.7rem;
+    }
+    .subtitulo {
+      font-size: 1rem;
+      color: var(--plata);
+      font-style: italic;
+      margin-bottom: 0.3rem;
+    }
+    .materia-tag {
+      display: inline-block;
+      margin-top: 0.9rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--negro);
+      background: var(--calabaza);
+      padding: 0.28rem 1rem;
+      border-radius: 2px;
+    }
+
+    /* BLOQUE INTRO */
+    .intro-block {
+      position: relative;
+      z-index: 2;
+      max-width: 720px;
+      margin: 2rem auto 0;
+      padding: 1.6rem 2rem;
+      background: linear-gradient(135deg, #1e103588, #0d051588);
+      border-left: 3px solid var(--calabaza);
+      border-radius: 2px;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: #d4c8b0;
+    }
+    .intro-block strong { color: var(--calabaza-luz); font-style: normal; }
+    .intro-block em { color: var(--hueso); }
+
+    /* SEPARADOR */
+    .sep { position: relative; z-index: 2; text-align: center; margin: 2.5rem 0 2.8rem; }
+    .sep-inner {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.9rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      color: var(--calabaza);
+      opacity: 0.7;
+    }
+    .sep-inner::before,
+    .sep-inner::after {
+      content: '';
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--calabaza));
+    }
+    .sep-inner::after { background: linear-gradient(90deg, var(--calabaza), transparent); }
+
+    /* MAIN / GRID */
+    main {
+      position: relative;
+      z-index: 2;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 1.8rem; }
+
+    /* TARJETA */
+    .card {
+      position: relative;
+      background: linear-gradient(145deg, #1e1035 0%, #160a28 50%, #1a0818 100%);
+      border: 1px solid #3a1a6644;
+      border-radius: 4px;
+      padding: 1.8rem 2rem 1.6rem;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--calabaza) 40%, var(--calabaza-luz) 60%, transparent);
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 50px #00000099, 0 0 30px #e8650a1a;
+      border-color: #6a3aaa55;
+    }
+    .card-num {
+      position: absolute;
+      top: 1rem; right: 1.5rem;
+      font-family: 'Eater', cursive;
+      font-size: 4rem;
+      color: #ffffff06;
+      line-height: 1;
+      user-select: none;
+    }
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 0.9rem;
+    }
+    .card-emoji {
+      font-size: 2rem;
+      filter: drop-shadow(0 0 8px #ff6a0044);
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+    .card-meta { flex: 1; }
+    .alumno {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--calabaza);
+      margin-bottom: 0.3rem;
+    }
+    .titulo {
+      font-family: 'Eater', cursive;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 400;
+      color: var(--hueso);
+      text-shadow: 0 0 12px #ff6a0033, 1px 1px 0 #1a0800;
+      line-height: 1.2;
+    }
+    .card-div {
+      width: 50px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--calabaza), transparent);
+      margin: 1rem 0;
+    }
+    .card-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      margin-bottom: 1.4rem;
+    }
+    .card-body.single { grid-template-columns: 1fr; }
+    @media (max-width: 600px) { .card-body { grid-template-columns: 1fr; } }
+    .resumen {
+      font-size: 0.9rem;
+      line-height: 1.78;
+      color: #c8b89a;
+      font-style: italic;
+    }
+
+    /* ETIQUETAS */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-bottom: 1.2rem;
+    }
+    .tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.63rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.22rem 0.65rem;
+      border-radius: 2px;
+      border: 1px solid;
+    }
+    .tag-halloween { color: var(--calabaza-luz); border-color: var(--calabaza);  background: #e8650a12; }
+    .tag-scratch   { color: var(--verde);        border-color: var(--verde);     background: #1db95412; }
+    .tag-micro     { color: var(--cian);         border-color: var(--cian);      background: #00c8c812; }
+    .tag-steam     { color: var(--lila);         border-color: var(--lila);      background: #a855f712; }
+
+    /* BOTÓN */
+    .btn-scratch {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1.2rem;
+      background: transparent;
+      border: 1.5px solid var(--calabaza);
+      color: var(--calabaza-luz);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: background 0.22s, color 0.22s, box-shadow 0.22s;
+    }
+    .btn-scratch:hover {
+      background: var(--calabaza);
+      color: var(--negro);
+      box-shadow: 0 0 20px #e8650a55;
+    }
+
+    /* FOOTER */
+    footer {
+      position: relative;
+      z-index: 2;
+      margin-top: 3rem;
+      text-align: center;
+      padding: 2rem 1rem;
+      border-top: 1px solid #3a1a5a33;
+    }
+    .footer-deco { font-size: 1.1rem; letter-spacing: 0.4rem; opacity: 0.45; margin-bottom: 0.7rem; }
+    .footer-text {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      color: var(--plata);
+      opacity: 0.65;
+      line-height: 1.8;
+    }
+    .footer-text strong { color: var(--calabaza); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    header        { animation: fadeUp 0.8s ease both; }
+    .intro-block  { animation: fadeUp 0.8s 0.15s ease both; }
+    .card:nth-child(1) { animation: fadeUp 0.7s 0.25s ease both; }
+    .card:nth-child(2) { animation: fadeUp 0.7s 0.40s ease both; }
+    .card:nth-child(3) { animation: fadeUp 0.7s 0.55s ease both; }
+    .card:nth-child(4) { animation: fadeUp 0.7s 0.70s ease both; }
+  </style>
+</head>
+<body>
+
+<div id="lluvia"></div>
+<div id="stars"></div>
+
+<header>
+  <p class="badge">IES Santa María del Águila · 2.º ESO</p>
+  <span class="luna">🌕</span>
+  <h1>Historias de Halloween<br>en Scratch</h1>
+  <p class="subtitulo">Computación y Robótica · Lengua Castellana</p>
+  <span class="materia-tag">Código Escuela STEAM 4.0</span>
+  <div class="intro-block">
+    El alumnado de 2.º ESO ha creado sus propias historias de terror con <em>Scratch</em>,
+    combinando pensamiento computacional con creatividad narrativa, dentro de las materias de
+    <strong>Computación y Robótica</strong> y <strong>Lengua Castellana</strong>.
+    Esta actividad forma parte del programa <strong>Código Escuela STEAM 4.0</strong>,
+    que integra la programación en todas las áreas del currículo.
+    Aquí recogemos las historias más destacadas del grupo.
+  </div>
+</header>
+
+<main>
+  <div class="sep"><span class="sep-inner">TRABAJOS DEL ALUMNADO</span></div>
+
+  <div class="grid">
+
+    <article class="card">
+      <span class="card-num">01</span>
+      <div class="card-head">
+        <span class="card-emoji">📖</span>
+        <div class="card-meta">
+          <p class="alumno">Zakaria Bahraoui Boutarbouche</p>
+          <h2 class="titulo">El Libro</h2>
+        </div>
+      </div>
+      <div class="card-div"></div>
+      <div class="card-body">
+        <p class="resumen">
+          Nicolás encontró un libro sin título en la biblioteca justo a medianoche.
+          Al abrirlo, leyó: <em>"Si dejas de leer, ellos vendrán."</em>
+          Las luces parpadearon y las sombras comenzaron a rodearle.
+        </p>
+        <p class="resumen">
+          Desesperado, siguió leyendo hasta llegar al final y murmuró las palabras
+          escritas: <em>"te poseo."</em> Al amanecer, el libro tenía un nuevo autor
+          grabado en la portada: <strong>NICOLÁS HERNÁNDEZ</strong>.
+        </p>
+      </div>
+      <div class="tags">
+        <span class="tag tag-halloween">Halloween</span>
+        <span class="tag tag-scratch">Scratch</span>
+        <span class="tag tag-micro">Microrrelato</span>
+        <span class="tag tag-steam">Código Escuela 4.0</span>
+      </div>
+      <a class="btn-scratch" href="https://scratch.mit.edu/projects/1242687469">▶ Ver proyecto en Scratch</a>
+    </article>
+
+    <article class="card">
+      <span class="card-num">02</span>
+      <div class="card-head">
+        <span class="card-emoji">🧙</span>
+        <div class="card-meta">
+          <p class="alumno">Ayman Maaroufi Ech Cherqy</p>
+          <h2 class="titulo">Buscando a los Elfos</h2>
+        </div>
+      </div>
+      <div class="card-div"></div>
+      <div class="card-body single">
+        <p class="resumen">
+          Había una vez un brujo caminando por el bosque hasta encontrarse con unos elfos.
+          Una aventura que mezcla magia y misterio entre los árboles oscuros de la noche de Halloween.
+        </p>
+      </div>
+      <div class="tags">
+        <span class="tag tag-halloween">Halloween</span>
+        <span class="tag tag-scratch">Scratch</span>
+        <span class="tag tag-micro">Microrrelato</span>
+        <span class="tag tag-steam">Código Escuela 4.0</span>
+      </div>
+      <a class="btn-scratch" href="https://scratch.mit.edu/projects/1242683394">▶ Ver proyecto en Scratch</a>
+    </article>
+
+    <article class="card">
+      <span class="card-num">03</span>
+      <div class="card-head">
+        <span class="card-emoji">🏚️</span>
+        <div class="card-meta">
+          <p class="alumno">Nada Tbandi</p>
+          <h2 class="titulo">La Casa del Bosque</h2>
+        </div>
+      </div>
+      <div class="card-div"></div>
+      <div class="card-body single">
+        <p class="resumen">
+          En un bosque lejano había una casa vieja y polvorienta que guardaba secretos
+          desde hacía generaciones. Una historia que nos recuerda que no todos los lugares
+          abandonados lo están por casualidad.
+        </p>
+      </div>
+      <div class="tags">
+        <span class="tag tag-halloween">Halloween</span>
+        <span class="tag tag-scratch">Scratch</span>
+        <span class="tag tag-micro">Microrrelato</span>
+        <span class="tag tag-steam">Código Escuela 4.0</span>
+      </div>
+      <a class="btn-scratch" href="https://scratch.mit.edu/projects/1227358478">▶ Ver proyecto en Scratch</a>
+    </article>
+
+    <article class="card">
+      <span class="card-num">04</span>
+      <div class="card-head">
+        <span class="card-emoji">🐸</span>
+        <div class="card-meta">
+          <p class="alumno">Hanae Katrani Rharbi</p>
+          <h2 class="titulo">El Mago, la Rana y el Murciélago</h2>
+        </div>
+      </div>
+      <div class="card-div"></div>
+      <div class="card-body single">
+        <p class="resumen">
+          El 28 de octubre, un mago vivía en una biblioteca repleta de libros de hechizos.
+          Con una rana y un murciélago como compañeros, la magia de Halloween toma un giro
+          inesperado y encantador.
+        </p>
+      </div>
+      <div class="tags">
+        <span class="tag tag-halloween">Halloween</span>
+        <span class="tag tag-scratch">Scratch</span>
+        <span class="tag tag-micro">Microrrelato</span>
+        <span class="tag tag-steam">Código Escuela 4.0</span>
+      </div>
+      <a class="btn-scratch" href="https://scratch.mit.edu/projects/1229679909">▶ Ver proyecto en Scratch</a>
+    </article>
+
+  </div>
+</main>
+
+<footer>
+  <p class="footer-deco">🕷️ 🕸️ 🕷️</p>
+  <p class="footer-text">
+    <strong>Código Escuela STEAM 4.0</strong> · IES Santa María del Águila · Curso 2025–2026
+  </p>
+</footer>
+
+<script>
+  /* Estrellas */
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 110; i++) {
+    const s = document.createElement('span');
+    s.style.cssText = `top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${2+Math.random()*5}s;--dl:${Math.random()*6}s`;
+    starsEl.appendChild(s);
+  }
+
+  /* Lluvia Halloween */
+  const iconos = ['🎃','🦇','👻','🕷️','🕸️','💀','🌙','⚗️','🔮','🧟','🧛','🦉','🌑','🩸'];
+  const lluviaEl = document.getElementById('lluvia');
+  for (let i = 0; i < 30; i++) {
+    const el = document.createElement('div');
+    el.className = 'icono-lluvia';
+    el.textContent = iconos[Math.floor(Math.random() * iconos.length)];
+    const size  = 1.1 + Math.random() * 1.3;
+    const dur   = 9 + Math.random() * 13;
+    const delay = -(Math.random() * 20);
+    const rot   = (Math.random() - 0.5) * 130 + 'deg';
+    el.style.cssText = `left:${Math.random()*100}%;font-size:${size}rem;--dur:${dur}s;--delay:${delay}s;--rot:${rot}`;
+    lluviaEl.appendChild(el);
+  }
+</script>
+</body>
+</html>
